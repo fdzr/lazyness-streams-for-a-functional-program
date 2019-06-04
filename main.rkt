@@ -432,17 +432,39 @@ update-env! :: Sym Val Env -> Void
 
 ; Ejercicio 2 Streams
 
-(define stream-take '{define stream-take {fun {n streams}
+#|(define stream-take '{define stream-take {fun {n streams}
                                               {if {= n 0}
                                                   {Empty}
-                                                  {stream {stream-hd streams} {stream-take {- n 1} {stream-tl streams}}}}}
+                                                  {stream {stream-hd streams} {stream-take {- n 1} 2}}}}
                        })
 
 (def stream-lib (list stream-data
                       make-stream
                       stream-hd
                       stream-tl
-                      stream-take))
+                      stream-take))|#
+
+(define stream-take '{define stream-take {fun {n streams}
+                                               {if {= n 0}
+                                                   {Empty}
+                                                   {Cons {stream-hd
+streams} {stream-take {- n 1} {stream-tl streams}}}}}
+                        })
+
+(def stream-zipWith '{define stream-zipWith {fun {f l1 l2}
+                                                  {stream {f {stream-hd l1}{stream-hd l2}} {stream-zipWith f {stream-tl l1}{stream-tl l2}} }
+                                                  }
+                        })
+
+(def fibs '{define fibs {stream 1 {stream 1 {stream-zipWith {fun {n m}
+                                                                 {+ n m}} {stream-tl fibs} fibs}}}})
+
+(def stream-lib (list stream-data
+                       make-stream
+                       stream-hd
+                       stream-tl
+                       stream-take
+                       stream-zipWith))
 
 ;(def stream-take '{define stream-take {fun {n list}
  ;                                          })
