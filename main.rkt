@@ -218,10 +218,7 @@
 ;; run :: s-expr -> number/boolean/procedura/struct
 (define(run prog)
   (define s-expr-build (append initial_s-expr (list prog)))
-  (with-handlers ([exn:fail? (lambda (exn)
-                               (pretty-printing(interp (parse s-expr-build) empty-env)))
-                               ])
-    (pretty-printing(interp (parse prog) empty-env)))
+  (pretty-printing(interp (parse s-expr-build) empty-env))
   )
 
 
@@ -458,6 +455,11 @@ streams} {stream-take {- n 1} {stream-tl streams}}}}}
 
 (def fibs '{define fibs {stream 1 {stream 1 {stream-zipWith {fun {n m}
                                                                  {+ n m}} {stream-tl fibs} fibs}}}})
+
+(def merge-sort '{define merge-sort {fun {stream1 stream2}
+                                         {if{< {stream-hd stream1} {stream-hd stream2}}
+                                            {stream {stream-hd stream1}{stream {stream-hd stream2} {merge-sort {stream-tl stream1}{stream-tl stream2}}}}
+                                            {stream {stream-hd stream2}{stream {stream-hd stream1} {merge-sort {stream-tl stream1}{stream-tl stream2}}}}}}})
 
 (def stream-lib (list stream-data
                        make-stream
