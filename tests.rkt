@@ -106,6 +106,34 @@
 
 |#
 
+(test (run '{List? {Empty}}) #t)
+  
+(test (run '{Empty? {Empty}}) #t)
+  
+(test (run '{Cons? {Cons 1 2}}) #t)
+  
+(test (run '{Empty? {Cons 1 2}}) #f)
+  
+(test (run '{Cons? {Empty}}) #f)      
+  
+;; match
+(test (run '{match 1 {case 1 => 2}}) 2)
+  
+(test (run '{match 2
+              {case 1 => 2}
+              {case 2 => 3}})             
+      3)
+  
+(test (run '{match #t {case #t => 2}}) 2)
+  
+(test (run '{match #f
+              {case #t => 2}
+              {case #f => 3}})             
+      3)
+
+
+
+
 
 (test (pretty-printing (run '{local {{datatype Nat
                                          {Zero}
@@ -170,14 +198,14 @@
                                                    {case {Succ n m} => n}}}}}
                          {pred {Succ {One}{Succ {Succ {Zero}{Succ {One}{One}}}{One}}}}})) "{One}")
 
-#|(test (run '{local {{datatype Nat
+(test (run '{local {{datatype Nat
                                 {Zero}
                                 {Succ n}}
                       {define pred {fun {n} 
                                         {match n
                                           {case {Zero} => {Zero}}
                                           {case {Succ m} => m}}}}}
-                {Succ? {pred {Succ {Succ {Zero}}}}}}) #t)|# ;test no pasa, hay que implementar cuando se pregunta por el constructor de un deftype
+                {Succ? {pred {Succ {Succ {Zero}}}}}}) #t) 
 
 (test (run '{List? {Cons 1 2}}) #t)
 (test/exn (run '{List? {A 1 2}}) "no binding for identifier: A")
