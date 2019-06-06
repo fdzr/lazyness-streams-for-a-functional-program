@@ -300,6 +300,8 @@ update-env! :: Sym Val Env -> Void
     )
   )
 
+;aux: Struct -> String
+; funcion que se va a ejecutar si el name del Struct es List, y devuelve un string que es la representacion del tipo de dato lista del datatype.
 (define (aux expr)
   (match expr
     ['() ""]
@@ -313,6 +315,9 @@ update-env! :: Sym Val Env -> Void
     )
   )
 
+;temp: Struct -> String
+; funcion auxiliar que es usada en la funcion (aux), se utiliza cuando hay listas anidadas, así de esta manera se asegura que la representación de la lista en string
+; sea la adecuada, si en esta funcion se detecta una estructura su control es cedido a la función aux que esta a su vez devuelve un string.
 (define (temp expr)
   (match expr
     ['() ""]
@@ -353,12 +358,17 @@ update-env! :: Sym Val Env -> Void
 
 ;
 
+; proc-args: List[Expr] Env ->List[number/boolean/procedure/Struct/Val]
+; función que recibe una lista de argumentos del nodo app y devuelve una lista de los argumentos interpretados o una promesa(strict) en el caso de que el argumento
+; sea lazy
 (define (proc-args args env)
   (if(equal? empty args)
      '()
      (cons (proc-args-aux(car args) env) (proc-args(cdr args) env)))
   )
 
+;proc-args-aux: Expr Env -> number/boolean/procedure/Struct/Val
+; función que recibe una expresión y devuelve la interpretación de la expresión o una promesa(lazy) en el caso de que un argumento sea lazy
 (define (proc-args-aux arg env)
   (match arg
     [(list id val)(if(symbol? id)
@@ -369,12 +379,8 @@ update-env! :: Sym Val Env -> Void
     )
   )
 
-(define (map-customize function list)
-  (if (equal? empty list)
-      '()
-      (cons (function(car list)) (map-customize function (cdr list))))
-  )
-
+; remove-lazy: symbol o list -> symbol
+; función que recibe un id o una lista en el caso de que el argumento sea lazy y devuelve el símbolo del id
 (define (remove-lazy id)
   (match id
     [(? symbol?) id]

@@ -312,12 +312,52 @@
                 {stream-take 10 {merge-sort fibs fibs}}}})   "{list 1 1 1 1 2 2 3 3 5 5}")
 
 
+(test (aux (structV 'List 'Cons (list 1 (structV 'List 'Cons (list 2 (structV 'List 'Empty empty)))))) "{list 1 2}")
+(test (aux (structV 'List 'Cons (list (structV 'List 'Cons (list 2 (structV 'List 'Empty empty))) 3))) "{list {list 2} 3}")
+(test
+ (aux
+  (structV 'List 'Cons
+           (list (structV 'List 'Cons
+                          (list (structV 'List 'Cons
+                                         (list (structV 'List 'Cons
+                                                        (list (structV 'List 'Cons
+                                                                       (list (structV 'List 'Empty empty)))))))))
+                 3)))
+ "{list {list {list {list {list {list} } } } } 3}")
+(test (aux (structV 'List 'Cons empty)) "{list}")
 
 
+(test (temp (structV 'List 'Cons (list (structV 'List 'Cons (list 2 (structV 'List 'Empty empty))) 3))) " {list 2} 3")
+(test (temp (structV 'List 'Cons (list 2 (structV 'List 'Empty empty))))  " 2")
+(test  (temp (list (structV 'List 'Cons
+                            (list (structV 'List 'Cons
+                                           (list (structV 'List 'Cons
+                                                          (list (structV 'List 'Cons
+                                                                         (list (structV 'List 'Empty empty)))))))))
+                   3))
+       " {list {list {list {list} } } } ")
+(test (temp (structV 'Nat 'Succ (list (structV 'Nat 'Zero empty)))) " {list} ")
+
+; tests correspondientes a la funcion rec, que construyes listas con Cons
+(test (rec (list 1 2 3)) '(Cons 1 (Cons 2 (Cons 3 (Empty)))))
+(test (rec (list 1 2 (list 3 4))) '(Cons 1 (Cons 2 (Cons (3 4) (Empty)))))
+(test (rec {list {list 1 2} {list 3 4} 6}) '(Cons (1 2) (Cons (3 4) (Cons 6 (Empty)))))
+
+; tests correspondientes a la función zip
+(test (zip (list 'x 'y)(list 1 2)) '((x 1) (y 2)))
+(test (zip (list '(lazy x) 'y)(list 1 2)) '(((lazy x) 1) (y 2)))
+(test (zip '(x y z)'(5 6 7)) '((x 5) (y 6) (z 7)))
 
 
+; tests correspondientes a la función proc-args
+(test (proc-args (zip '(x y z) (list (num 1) (num 2) (num 3))) (aEnv '((x . 1) (y . 2) (z . 3)) (mtEnv))) '(1 2 3))
+(test (proc-args (zip '(x y z) (list (num 1) (num 2) (prim-app '+ (list (num 2)(num 3))))) (mtEnv)) '(1 2 5))
+(test (proc-args (zip '(x y (lazy z)) (list (num 1) (num 2) (prim-app '+ (list (num 2)(num 3))))) (mtEnv)) (list 1 2(strict (lambda() 1) (box #f))));este test no corre
 
 
+; tests correspondientes a la función remove-lazy
+(test (remove-lazy 'x) 'x)
+(test (remove-lazy '(lazy y)) 'y)
 
 
 
