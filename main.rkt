@@ -187,8 +187,8 @@
                
                env)
   ;; variant predicate, eg. Zero?, Succ?
-  (update-env! (string->symbol (string-append (symbol->string varname) "?"))
-               (λ (v) (symbol=? (structV-variant (first v)) varname))
+  (update-env! (string->symbol (string-append (symbol->string varname) "?")); predicados (constructores) de las estructuras
+               (λ (v) (symbol=? (structV-variant (interp (first(strict-function v)) (strict-cache v))) varname))
                env))
 
 ;;;;
@@ -401,7 +401,6 @@ update-env! :: Sym Val Env -> Void
 
 ; Ejercicio 2 (Evaluación Perezoza)
 (def stream-data '{datatype Stream
-                              {Empty}
                               {stream hd {lazy tl}}
                               })
 
