@@ -352,12 +352,20 @@
 ; tests correspondientes a la función proc-args
 (test (proc-args (zip '(x y z) (list (num 1) (num 2) (num 3))) (aEnv '((x . 1) (y . 2) (z . 3)) (mtEnv))) '(1 2 3))
 (test (proc-args (zip '(x y z) (list (num 1) (num 2) (prim-app '+ (list (num 2)(num 3))))) (mtEnv)) '(1 2 5))
-(test (proc-args (zip '(x y (lazy z)) (list (num 1) (num 2) (prim-app '+ (list (num 2)(num 3))))) (mtEnv)) (list 1 2(strict (lambda() 1) (box #f))));este test no corre
+(test (proc-args (zip '(x y z) (list (num 1) (num 2) (prim-app '+ (list (num 2)(num 3))))) (mtEnv))
+      (list 1 2 5))
 
+;tests correspondientes a la función proc-args-aux
+(test (map (lambda(x)(proc-args-aux x (mtEnv)))  (zip '(x y z) (list (num 1) (num 2) (prim-app '+ (list (num 2)(num 3)))))) '(1 2 5))
+(test (map (lambda(x)(proc-args-aux x (mtEnv))) (zip '(x y) (list (num 1)(prim-app '+ (list (num 2)(num 3)))))) '(1 5))
 
 ; tests correspondientes a la función remove-lazy
 (test (remove-lazy 'x) 'x)
 (test (remove-lazy '(lazy y)) 'y)
+
+;tests correspondientes a la función  interp-id
+(test (interp-id (strict (lambda()(interp (parse '{+ 1 2}) (mtEnv))) (box #f))) 3)
+(test (interp-id (strict (lambda()(interp (parse '1) (mtEnv))) (box #f))) 1)
 
 
 

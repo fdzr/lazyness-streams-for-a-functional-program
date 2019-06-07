@@ -130,7 +130,7 @@
     ; function (notice the meta interpretation)
     [(fun ids body)
      (λ (arg-vals)
-       (printf "arg-values ~v~n" arg-vals)
+       ;(printf "arg-values ~v~n" arg-vals)
        (def arg_vals (proc-args (zip ids (strict-function arg-vals)) (strict-cache arg-vals)))
        ;(printf "extend environment ~v~n" (extend-env (map remove-lazy ids) arg_vals env))
        (interp body (extend-env (map remove-lazy ids) arg_vals env)))]
@@ -183,7 +183,7 @@
   ;; variant data constructor, eg. Zero, Succ
   (update-env! varname
                ;(λ (args)(structV name varname args)) ;solución original
-               (λ (args)(printf "interp-variant ~v~n~a" args (variant-params var))(structV name varname (proc-args (zip (variant-params var) (strict-function args)) (strict-cache args)))); posible solucion a datatypes con parametros lazy
+               (λ (args)(structV name varname (proc-args (zip (variant-params var) (strict-function args)) (strict-cache args)))); posible solucion a datatypes con parametros lazy
                
                env)
   ;; variant predicate, eg. Zero?, Succ?
@@ -236,8 +236,8 @@ update-env! :: Sym Val Env -> Void
 (def empty-env  (mtEnv))
 
 (define(env-lookup id env)
-  (printf "environment actual ~v~n" env)
-  (printf "lookup id ~v~n" id)
+  ;(printf "environment actual ~v~n" env)
+  ;(printf "lookup id ~v~n" id)
   (match env
     [(mtEnv) (error 'env-lookup "no binding for identifier: ~a" id)]
     [(aEnv bindings rest)
@@ -393,6 +393,9 @@ update-env! :: Sym Val Env -> Void
 (deftype Val
   (strict function cache))
 
+; interp-id:  Val o (Strict) -> Val
+; función que recibe un valor o una promesa, después de interpretar a un id, si es una promesa, es porque el id era lazy donde fue declarado
+;la ejecuta y devuelve el resultado que es un valor, y si es un valor lo devuelve y ya
 (define (interp-id expr)
   (match expr
     [(strict fun cache)(if(unbox cache)
@@ -449,8 +452,7 @@ update-env! :: Sym Val Env -> Void
 (define stream-take '{define stream-take {fun {n streams}
                                                {if {= n 0}
                                                    {Empty}
-                                                   {Cons {stream-hd
-streams} {stream-take {- n 1} {stream-tl streams}}}}}
+                                                   {Cons {stream-hd streams} {stream-take {- n 1} {stream-tl streams}}}}}
                         })
 
 (def stream-zipWith '{define stream-zipWith {fun {f l1 l2}
