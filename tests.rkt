@@ -311,7 +311,7 @@
               {local {,stream-take ,merge-sort ,fibs ,stream-zipWith}
                 {stream-take 10 {merge-sort fibs fibs}}}})   "{list 1 1 1 1 2 2 3 3 5 5}")
 
-
+; tests correspondientes a la función aux
 (test (aux (structV 'List 'Cons (list 1 (structV 'List 'Cons (list 2 (structV 'List 'Empty empty)))))) "{list 1 2}")
 (test (aux (structV 'List 'Cons (list (structV 'List 'Cons (list 2 (structV 'List 'Empty empty))) 3))) "{list {list 2} 3}")
 (test
@@ -326,7 +326,7 @@
  "{list {list {list {list {list {list} } } } } 3}")
 (test (aux (structV 'List 'Cons empty)) "{list}")
 
-
+; tests correspondientes a la función temp
 (test (temp (structV 'List 'Cons (list (structV 'List 'Cons (list 2 (structV 'List 'Empty empty))) 3))) " {list 2} 3")
 (test (temp (structV 'List 'Cons (list 2 (structV 'List 'Empty empty))))  " 2")
 (test  (temp (list (structV 'List 'Cons
@@ -338,7 +338,7 @@
        " {list {list {list {list} } } } ")
 (test (temp (structV 'Nat 'Succ (list (structV 'Nat 'Zero empty)))) " {list} ")
 
-; tests correspondientes a la funcion rec, que construyes listas con Cons
+; tests correspondientes a la función rec, que construyes listas con Cons
 (test (rec (list 1 2 3)) '(Cons 1 (Cons 2 (Cons 3 (Empty)))))
 (test (rec (list 1 2 (list 3 4))) '(Cons 1 (Cons 2 (Cons (3 4) (Empty)))))
 (test (rec {list {list 1 2} {list 3 4} 6}) '(Cons (1 2) (Cons (3 4) (Cons 6 (Empty)))))
