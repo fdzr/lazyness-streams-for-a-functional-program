@@ -328,7 +328,7 @@ update-env! :: Sym Val Env -> Void
   )
 
 ; Listas
-
+; variable con el valor de una estructura por defecto, para que todos los programas estén dentro del scope de la definición de esta estructura
 (define initial_s-expr '{local {{datatype List
                           {Empty}
                           {Cons a b}}
@@ -409,27 +409,33 @@ update-env! :: Sym Val Env -> Void
 
 
 ; Ejercicio 2 (Evaluación Perezoza)
+;tipo de datos para construir streams en MiniScheme
 (def stream-data '{datatype Stream
                               {stream hd {lazy tl}}
                               })
 
+
+;función que devuelve un stream en MiniScheme
 (def make-stream '{define make-stream {fun {hd {lazy tl}}
                                               {stream hd tl}}})
 
 
 
 ; Trabajando con Streams
-
+; función que devuelve el primer elemento de un stream
 (def stream-hd '{define stream-hd {fun {streams}
                                           {match streams
                                             {case {stream hd tl} => hd}}
                                           }})
 
+;función que devuelve el resto de un stream en MiniScheme
 (def stream-tl '{define stream-tl {fun {streams}
                                           {match streams
                                             {case {stream hd tl} => tl}}
                                           }})
 
+
+;función que construye un stream de 1 en MiniScheme
 (def ones '{define ones {make-stream 1 ones}})
 
 
@@ -449,20 +455,24 @@ update-env! :: Sym Val Env -> Void
                       stream-tl
                       stream-take))|#
 
+;función en MiniScheme que devuelve los primeros n elementos de un stream
 (define stream-take '{define stream-take {fun {n streams}
                                                {if {= n 0}
                                                    {Empty}
                                                    {Cons {stream-hd streams} {stream-take {- n 1} {stream-tl streams}}}}}
                         })
 
+;función en MiniScheme que dado dos streams y una función construye un nuevo streams aplicándole la función a los elementos de los streams
 (def stream-zipWith '{define stream-zipWith {fun {f l1 l2}
                                                   {stream {f {stream-hd l1}{stream-hd l2}} {stream-zipWith f {stream-tl l1}{stream-tl l2}} }
                                                   }
                         })
 
+;función en MiniScheme que devuelve la secuencia de fibonacci en un stream
 (def fibs '{define fibs {stream 1 {stream 1 {stream-zipWith {fun {n m}
                                                                  {+ n m}} {stream-tl fibs} fibs}}}})
 
+;función en MiniScheme que dado dos streams devuelve un stream ordenado con los elementos de ambos streams fusionados
 (def merge-sort '{define merge-sort {fun {stream1 stream2}
                                          {if{< {stream-hd stream1} {stream-hd stream2}}
                                             {stream {stream-hd stream1}{stream {stream-hd stream2} {merge-sort {stream-tl stream1}{stream-tl stream2}}}}
